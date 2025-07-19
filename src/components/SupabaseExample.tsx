@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
 export default function SupabaseExample() {
@@ -10,8 +10,14 @@ export default function SupabaseExample() {
   const testConnection = async () => {
     setLoading(true)
     try {
+      // Check if environment variables are set
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://placeholder.supabase.co') {
+        setMessage('⚠️ Supabase environment variables not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file.')
+        return
+      }
+
       // Test the connection by getting the current user (will be null if not authenticated)
-      const { data, error } = await supabase.auth.getUser()
+      const { error } = await supabase.auth.getUser()
       
       if (error) {
         setMessage(`Connection error: ${error.message}`)
